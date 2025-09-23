@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Bullet.generated.h"
+#include "Enemy.generated.h"
 
 UCLASS()
-class SHOOTINGCPP_API ABullet : public AActor
+class SHOOTINGCPP_API AEnemy : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ABullet();
+	AEnemy();
 
 protected:
 	// Called when the game starts or when spawned
@@ -21,24 +21,22 @@ protected:
 
 public:	
 	// Called every frame
-
 	virtual void Tick(float DeltaTime) override;
-	UPROPERTY(EditAnywhere)
-	float MoveSpeed = 800.0f;
 
 	UPROPERTY(EditAnywhere)
 	class UBoxComponent* BoxComp;
 
-	UPROPERTY(EditAnywhere)
+	// VisibleAnywhere는 해당 속성을 엔진에서 어디서든 읽을 수 있게 해준다.
+	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* MeshComp;
 
-	UPROPERTY(EditAnywhere, Category = "Bullet")
-	class UParticleSystem* ExplosionFx;
+	UPROPERTY(EditAnywhere)
+	int32 TraceRate = 35;
 
-	UFUNCTION()
-	void OnBulletOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
-		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UPROPERTY(EditAnywhere)
+	float MoveSpeed = 800.0f;
 	
-
+private:
+	FVector Direction;
 
 };
