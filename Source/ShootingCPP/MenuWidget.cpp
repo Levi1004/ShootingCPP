@@ -3,10 +3,10 @@
 
 #include "MenuWidget.h"
 #include "Components/Button.h"
-#include "ShootingGameModeBase.h"
+#include "ShootingGamemodeBase.h"
 
-void UMenuWidget::AddListener(AShootingGameModeBase* GameMode)
+void UMenuWidget::AddListener(AShootingGamemodeBase* GameMode)
 {
-    ButtonRestart->OnClicked.AddUniqueDynamic(GameMode, &AShootingGameModeBase::GameRestart);
-	ButtonQuit->OnClicked.AddUniqueDynamic(GameMode, &AShootingGameModeBase::GameQuit);
+    ButtonRestart->OnClicked.AddUniqueDynamic(GameMode, &AShootingGamemodeBase::GameRestart);
+	ButtonQuit->OnClicked.AddUniqueDynamic(GameMode, &AShootingGamemodeBase::GameQuit);
 }

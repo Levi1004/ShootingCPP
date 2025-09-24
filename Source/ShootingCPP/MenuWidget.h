@@ -22,5 +22,5 @@ protected:
 	class UButton* ButtonQuit;
 
 public:
-	void AddListener(class AShootingGameModeBase* GameMode);
+	void AddListener(class AShootingGamemodeBase* GameMode);
 };
