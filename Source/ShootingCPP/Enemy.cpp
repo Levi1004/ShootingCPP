@@ -6,6 +6,9 @@
 #include "Components/InstancedStaticMeshComponent.h"
 #include "EngineUtils.h"
 #include "PawnPlayer.h"
+#include "Kismet/GameplayStatics.h"
+#include "ShootingGamemodeBase.h"
+
 
 // Sets default values
 AEnemy::AEnemy()
@@ -31,8 +34,14 @@ AEnemy::AEnemy()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	// BoxComp : 감지나 충돌 이벤트를 발생시킬 수 있는 기능
+	// OnComponentBeginOverlap : 다른 컴포넌트와 감지가 발동 시작 했을때, 실행되는 델리게이트
+	// AddDynamic : OnComponentBeginOverlap 델리게이트에 &Aenmy::OnEnemyOverlap 이 함수를 추가해준다/
+	// 즉 다른 컴포넌트와 Beginoverlap이 실행되었을때
+	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnEnemyOverlap);
+
 	int32 DrawResult = FMath::RandRange(1, 100);
+
 	if (DrawResult < TraceRate)
 	{
 		// 추첨 성공
@@ -52,6 +61,17 @@ void AEnemy::BeginPlay()
 		TActorIterator<APawnPlayer> Players(GetWorld());
 		//for (TActorIterator<APlayerPawn> palyer(GetWorld()); player; ++player)
 
+		// TActorIteratpr bool 연산자로 사용하면, TactorIterator가 끝에 도달했는지 반환하도록
+		// bool 연산자를 커스텀해놓았다.
+		// Players를 그냥 조건식으로 사용하면
+		// true는 끝이 아니다. false는 끝이다.
+		if (!Players)
+		{
+			// TActprIterator가 끝에 도달했다.
+			// 즉 검색 된 APawnPalyer가 없다.
+			Direction = GetActorForwardVector();
+			return;
+		}
 
 		// 초기화 식 : Players 변수를 넣는다.
 		// 조건식 현재 Players가 nullptr인가\?
@@ -85,5 +105,32 @@ void AEnemy::Tick(float DeltaTime)
 	FVector NewLocation = GetActorLocation() + Direction * MoveSpeed * DeltaTime;
 	SetActorLocation(NewLocation);
 
+}
+
+void AEnemy::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	APawnPlayer* CrashPlayer = Cast<APawnPlayer>(OtherActor);
+
+	 if (CrashPlayer != nullptr)
+	 {
+		 // 충돌 한 ohteractor는 player이다.
+		 CrashPlayer->Destroy();
+
+		 UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionFx, GetActorLocation(), GetActorRotation());
+
+		 AGameModeBase* CurrentGameModeBase =  GetWorld()->GetAuthGameMode();
+		 if (CurrentGameModeBase != nullptr)
+		 {
+
+
+			 AShootingGamemodeBase* ShootingGameModeBase = Cast<AShootingGamemodeBase>(CurrentGameModeBase);
+			 if (ShootingGameModeBase != nullptr)
+			 {
+				 ShootingGameModeBase->ShowMenu();
+				 ShootingGameModeBase->GamePaused();
+			 }
+		 }
+	 }
+ Destroy();
 }
 

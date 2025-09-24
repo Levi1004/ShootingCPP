@@ -79,7 +79,9 @@ void APawnPlayer::Tick(float DeltaTime)
 	FVector NewLocation = GetActorLocation() + Direction * MoveSpeed * DeltaTime;
 
 	// 결과 위치로 객체 이동 11
-	SetActorLocation(NewLocation);
+	SetActorLocation(NewLocation, true);
+
+
 
 
 }

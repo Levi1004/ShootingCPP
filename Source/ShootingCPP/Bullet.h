@@ -32,7 +32,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* MeshComp;
 
-	UPROPERTY(EditAnywhere, Category = "Bullet")
+	UPROPERTY(EditAnywhere)
 	class UParticleSystem* ExplosionFx;
 
 	UFUNCTION()

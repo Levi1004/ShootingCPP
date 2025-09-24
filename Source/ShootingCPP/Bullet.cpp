@@ -6,6 +6,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Enemy.h"
 #include "Kismet/GameplayStatics.h"
+#include "ShootingGamemodeBase.h"
 
 // Sets default values
 ABullet::ABullet()
@@ -49,6 +50,18 @@ void ABullet::OnBulletOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	{
         CrashEnemy->Destroy();
 
+		AGameModeBase* CurrentGameModeBase = GetWorld()->GetAuthGameMode();
+
+		AShootingGamemodeBase* ShootingGamemodeBase = Cast<AShootingGamemodeBase>(CurrentGameModeBase);
+
+		if (ShootingGamemodeBase)
+		{
+			ShootingGamemodeBase->AddScore(1);
+		}
+
+		// UGameplaystatics 클래스 타입
+		// SpawnEmitterAtLocation Static 함수, 클래스에 포함되는 함수
+		// Getworld() : 현재 UWorld 오브젝트
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionFx, GetActorLocation(), GetActorRotation());
 
 	
